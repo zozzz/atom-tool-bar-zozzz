@@ -32,13 +32,16 @@ module.exports = AtomToolBarZozzz =
 				if @_SelectedRepo
 					setTimeout (=>
 						item.loadPath(@_SelectedRepo.repo.workingDirectory)
+						@reloadToolbar()
 					), 50
+			@reloadToolbar()
 
 		@subscriptions.add atom.project.onDidChangePaths (paths) =>
 			@reloadToolbar()
 
-		@subscriptions.add atom.workspace.onDidChangeActivePaneItem (item) =>
-			@reloadToolbar()
+		# @subscriptions.add atom.workspace.onDidChangeActivePaneItem (item) =>
+		# 	console.log(item)
+
 
 	deactivate: ->
 		@subscriptions.dispose()
@@ -115,6 +118,10 @@ module.exports = AtomToolBarZozzz =
 					callback: "window:toggle-invisibles"
 					tooltip: "Toggle invisibles"
 					iconset: "ion"
+				@toolBar.addButton
+					icon: "zap"
+					callback: "run:file"
+					tooltip: "Run file"
 
 			if atom.inDevMode()
 				@toolBar.addSpacer()
@@ -186,7 +193,7 @@ module.exports = AtomToolBarZozzz =
 
 				if @has_activeEditor
 					for r in repos
-						if path.normalize(editor.getPath()).indexOf(path.normalize(r.repo.workingDirectory)) == 0
+						if editor.getPath() and path.normalize(editor.getPath()).indexOf(path.normalize(r.repo.workingDirectory)) == 0
 							@has_gitRepoForEditor = true
 							break
 
